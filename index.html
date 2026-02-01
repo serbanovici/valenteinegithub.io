@@ -13,54 +13,62 @@
             margin: 0;
             background-color: #ffe6e6;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
+            overflow: hidden; /* Împiedică scroll-ul când fuge butonul */
             text-align: center;
         }
 
         #container {
-            background-white: white;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             background-color: white;
+            padding: 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+            width: 90%;
+            max-width: 400px;
         }
 
         h1 {
             color: #ff4d6d;
-            font-size: 2rem;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
         }
 
-        .buttons {
+        .buttons-wrapper {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
+            align-items: center;
+            gap: 40px; /* Distanța dintre butoane */
+            min-height: 60px;
             position: relative;
-            height: 50px;
         }
 
         button {
-            padding: 10px 25px;
+            padding: 12px 30px;
             font-size: 1.2rem;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: transform 0.2s;
+            transition: transform 0.2s, background-color 0.2s;
+            font-weight: bold;
         }
 
+        /* Butonul DA - Dreapta */
         #daBtn {
             background-color: #ff4d6d;
             color: white;
+            order: 2; /* Îl forțează să fie al doilea (dreapta) */
         }
 
         #daBtn:hover {
             transform: scale(1.1);
+            background-color: #ff758f;
         }
 
+        /* Butonul NU - Stânga */
         #nuBtn {
-            background-color: #808080;
+            background-color: #adb5bd;
             color: white;
-            position: absolute;
+            order: 1; /* Îl forțează să fie primul (stânga) */
+            z-index: 1000;
         }
 
         #successMessage {
@@ -68,7 +76,13 @@
         }
 
         .emoji {
-            font-size: 3rem;
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+
+        p {
+            color: #c9184a;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -76,18 +90,18 @@
 
     <div id="container">
         <div id="questionArea">
-            <div class="emoji">💖</div>
+            <div class="emoji">🥺</div>
             <h1>Vrei să fii valentainu meu?</h1>
-            <div class="buttons">
-                <button id="daBtn">Da</button>
+            <div class="buttons-wrapper">
                 <button id="nuBtn">Nu</button>
+                <button id="daBtn">Da</button>
             </div>
         </div>
 
         <div id="successMessage">
-            <div class="emoji">🎉</div>
-            <h1 style="color: #c9184a;">BINEEEE NE VEDEM PE 14 FEBRUARIE!</h1>
-            <p style="font-size: 1.5rem;">SAVE THE DATE 💜💜💜💜💜💜</p>
+            <div class="emoji">🥰</div>
+            <h1>BINEEEE NE VEDEM PE 14 FEBRUARIE!</h1>
+            <p>SAVE THE DATE 💜💜💜💜💜💜</p>
         </div>
     </div>
 
@@ -97,23 +111,36 @@
         const questionArea = document.getElementById('questionArea');
         const successMessage = document.getElementById('successMessage');
 
-        // Funcția care mișcă butonul "Nu"
         const moveButton = () => {
+            // Calculăm poziții random în fereastră
+            // Scădem din dimensiunea ferestrei lățimea butonului ca să nu iasă din ecran
             const x = Math.random() * (window.innerWidth - nuBtn.offsetWidth);
             const y = Math.random() * (window.innerHeight - nuBtn.offsetHeight);
             
+            // Schimbăm poziția în "fixed" doar când începe să fugă
+            nuBtn.style.position = 'fixed';
             nuBtn.style.left = `${x}px`;
             nuBtn.style.top = `${y}px`;
-            nuBtn.style.position = 'fixed';
         };
 
-        nuBtn.addEventListener('mouseover', moveButton);
-        nuBtn.addEventListener('click', moveButton); // În caz că e pe telefon
+        // Pentru Laptop (când mouse-ul se apropie)
+        nuBtn.addEventListener('mouseenter', moveButton);
 
-        // Funcția pentru butonul "Da"
+        // Pentru Telefon (când e atins)
+        nuBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Împiedică click-ul normal
+            moveButton();
+        });
+
+        // În caz că apucă să dea click (pentru orice eventualitate)
+        nuBtn.addEventListener('click', moveButton);
+
+        // Evenimentul pentru DA
         daBtn.addEventListener('click', () => {
             questionArea.style.display = 'none';
             successMessage.style.display = 'block';
+            // Opțional: o mică explozie de confetti în consolă sau oprește fuga butonului NU
+            nuBtn.style.display = 'none';
         });
     </script>
 </body>
